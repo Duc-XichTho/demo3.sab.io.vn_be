@@ -23,7 +23,10 @@ import {
   getTemplateTableByPlanIdController,
   createTemplateTableController,
   getAllTemplateTablesPlanController,
-  getTemplateTableByDevIdController, getTemplateRowByIdController
+  getTemplateTableByDevIdController,
+  getTemplateRowByIdController,
+  createBatchTemplateDataController,
+  updateBatchTemplateRowController, deleteTemplateColByTableIdController
 } from "../controllers/templateSettingController.js";
 
 const router = express.Router();
@@ -53,6 +56,7 @@ router.post("/create-table", createTemplateTableController);
 router.post("/create-column", createTemplateColumnController);
 
 router.post("/create-row", createTemplateRowController);
+router.post("/create-batch-row", createBatchTemplateDataController);
 
 // UPDATE
 router.put("/update-table", updateTemplateTableController);
@@ -64,6 +68,8 @@ router.put("/update-column-width", updateTemplateColumnWidthController);
 router.put("/update-column-indexes", updateColumnIndexesController);
 
 router.put("/update-row", updateTemplateRowController);
+
+router.put("/update-batch-row", updateBatchTemplateRowController);
 
 router.put("/update-select-option", updateColumnSelectOptionController);
 
@@ -83,6 +89,7 @@ router.delete(
   "/delete-all-row-by-table/:tableId",
   deleteTemplateRowByTableIdController
 );
+router.delete("/delete-column-by-table/:tableId", deleteTemplateColByTableIdController);
 
 router.put("/delete-column", deleteTemplateColumnController);
 

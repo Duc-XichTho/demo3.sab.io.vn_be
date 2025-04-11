@@ -1,31 +1,25 @@
 import {
-  getAllTemplateTables,
-  getSheetTableByFileNoteId,
-  getTemplateColumn,
-  getTemplateRow,
-  getValidationData,
-  getTableById,
   createTemplateColumn,
-  createTemplateRow,
-  updateTemplateTable,
-  updateTemplateColumn,
-  updateTemplateColumnWidth,
-  updateColumnIndexes,
-  updateTemplateRow,
-  updateColumnSelectOption,
-  updateColumnTemplateOption,
-  updateColumnFormulaOption,
-  deleteTemplateRow,
+  createTemplateTableService,
   deleteTemplateColumn,
   getAllSheetTable,
-  deleteTemplateRowByTableId,
-  getTemplateTableByPlanIdService,
-  createTemplateTableService,
+  getAllTemplateTables,
   getAllTemplateTablesPlan,
+  getTableById,
+  getTemplateColumn,
   getTemplateTableByDevIdService,
-  getTemplateTableByNoteIdService, getTemplateRowById
+  getTemplateTableByNoteIdService,
+  getTemplateTableByPlanIdService,
+  getValidationData,
+  updateColumnFormulaOption,
+  updateColumnIndexes,
+  updateColumnSelectOption,
+  updateColumnTemplateOption,
+  updateTemplateColumn,
+  updateTemplateColumnWidth,
+  updateTemplateTable
 } from "../services/templateSettingService.js";
-import {createCardService} from "../services/cardService.js";
+import * as TemplateDataService from '../services/TemplateData.service.js';
 
 // GET
 export const getAllTemplateTablesController = async (req, res) => {
@@ -132,7 +126,8 @@ export const getTemplateColumnController = async (req, res) => {
 export const getTemplateRowController = async (req, res) => {
   try {
     let { tableId } = req.params;
-    const data = await getTemplateRow(tableId);
+    const data = await TemplateDataService.getTemplateDataByTableIdService(tableId);
+    // const data = await getTemplateRow(tableId);
     res.status(200).json(data);
   } catch (e) {
     res
@@ -144,7 +139,8 @@ export const getTemplateRowController = async (req, res) => {
 export const getTemplateRowByIdController = async (req, res) => {
   try {
     let { id } = req.params;
-    const data = await getTemplateRowById(id);
+    const data = await TemplateDataService.getTemplateDataByIdService(id);
+    // const data = await getTemplateRowById(id);
     res.status(200).json(data);
   } catch (e) {
     res
@@ -182,7 +178,7 @@ export const createTemplateColumnController = async (req, res) => {
 export const createTemplateRowController = async (req, res) => {
   try {
     let { tableId, data } = req.body;
-    const result = await createTemplateRow(tableId, data);
+    const result = await TemplateDataService.createTemplateDataService(tableId, data);
     res.status(200).json(result);
   } catch (e) {
     res.status(404).json({
@@ -192,6 +188,16 @@ export const createTemplateRowController = async (req, res) => {
     });
   }
 };
+
+export const createBatchTemplateDataController = async (req, res) => {
+  try {
+    let { tableId, data } = req.body;
+    const result = await TemplateDataService.createBatchTemplateDataService(tableId, data);
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(404).json({ message: "Lỗi createBacthTemplateDataController" + e.message, });
+  }
+}
 
 // UPDATE
 export const updateTemplateTableController = async (req, res) => {
@@ -248,7 +254,7 @@ export const updateColumnIndexesController = async (req, res) => {
 export const updateTemplateRowController = async (req, res) => {
   try {
     let { id, data } = req.body;
-    const result = await updateTemplateRow(id, data);
+    const result = await TemplateDataService.updateTemplateDataService(id, data);
     res.status(200).json(result);
   } catch (e) {
     res.status(404).json({
@@ -257,6 +263,19 @@ export const updateTemplateRowController = async (req, res) => {
     });
   }
 };
+
+export const updateBatchTemplateRowController = async (req, res) => {
+ try {
+    let { tableId, data } = req.body;
+    const result = await TemplateDataService.updateBatchTemplateDataService(tableId, data);
+    res.status(200).json(result);
+ } catch (error) {
+    res.status(404).json({
+      message:
+        "Lỗi updateBatchTemplateRowController " + error.message,
+    })
+ }
+}
 
 export const updateColumnSelectOptionController = async (req, res) => {
   try {
@@ -301,7 +320,7 @@ export const updateColumnFormulaOptionController = async (req, res) => {
 export const deleteTemplateRowController = async (req, res) => {
   try {
     let id = req.params.id;
-    const result = await deleteTemplateRow(id);
+    const result = await TemplateDataService.deleteTemplateDataByIdService(id);
     res.status(200).json(result);
   } catch (e) {
     res.status(404).json({
@@ -313,12 +332,25 @@ export const deleteTemplateRowController = async (req, res) => {
 export const deleteTemplateRowByTableIdController = async (req, res) => {
   try {
     let tableId = req.params.tableId;
-    const result = await deleteTemplateRowByTableId(tableId);
+    const result = await TemplateDataService.deleteTemplateRowByTableIdService(tableId);
     res.status(200).json(result);
   } catch (e) {
     res.status(404).json({
       message:
         "Lỗi khi tạo dòng cho bản ghi sheet row không tồn tại: " + e.message,
+    });
+  }
+};
+
+export const deleteTemplateColByTableIdController = async (req, res) => {
+  try {
+    let tableId = req.params.tableId;
+    const result = await TemplateDataService.deleteTemplateColByTableIdService(tableId);
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(404).json({
+      message:
+        "Lỗi khi tạo dòng cho bản ghi column không tồn tại: " + e.message,
     });
   }
 };
