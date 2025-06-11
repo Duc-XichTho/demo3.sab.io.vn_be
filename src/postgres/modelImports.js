@@ -169,6 +169,18 @@ import {createRuleSettingModel} from "../models/ruleSetting.js";
 import {createBCanvasMappingModel} from "../models/bCanvasMapping.js";
 import {createBCanvasDataOriginalRowModel} from "../models/bCanvasDataOriginalRow.js";
 import {createBCanvasDataOriginalModel} from "../models/bCanvasDataOriginal.js";
+import {createWebPageModel} from "../models/webPage.js";
+import {createStoryWebPageModel} from "../models/storyWebPage.js";
+import { createKHKDModel } from "../models/khkd.js";
+import { createKHKDElementModel } from "../models/khkdElement.js";
+import { createKHKDTongHopModel } from "../models/khkdTongHop.js";
+import {createKpiKQKDModel} from "../models/kpiKQKD.js";
+import {createDienGiaiModel} from "../models/dienGiai.js";
+import {createOnboardingGuideModel} from "../models/onboardingGuideModel.js";
+import { createKtqtMappingModel } from "../models/ktqtMapping.js";
+import { createKtqtImportModel } from "../models/ktqtImport.js";
+import { createKtqtImportHistoryModel } from "../models/ktqtImportHistory.js";
+import { createAiChatHistoryModel } from "../models/aiChatHistory.js";
 
 export const modelImports = {
   createRuleSettingModel,
@@ -341,5 +353,17 @@ export const modelImports = {
   createCFConfigModel,
   createBCanvasMappingModel,
   createBCanvasDataOriginalRowModel,
-  createBCanvasDataOriginalModel
+  createBCanvasDataOriginalModel,
+  createWebPageModel,
+  createStoryWebPageModel,
+  createKHKDModel,
+  createKHKDElementModel,
+  createKHKDTongHopModel,
+  createKpiKQKDModel,
+  createDienGiaiModel,
+  createOnboardingGuideModel,
+  createKtqtMappingModel,
+  createKtqtImportModel,
+  createKtqtImportHistoryModel,
+  createAiChatHistoryModel
 }

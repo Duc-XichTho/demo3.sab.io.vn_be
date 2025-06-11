@@ -11,6 +11,17 @@ export const createKTQTSoKeToanModel = async (sequelize) => {
                 primaryKey: true,
                 autoIncrement: true,
             },
+            daHopNhat: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
+            isUse: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: true,
+            },
+            idKTQT: {
+                type: DataTypes.INTEGER,
+            },
             costPool: {
                 type: DataTypes.STRING,
             },
@@ -71,7 +82,13 @@ export const createKTQTSoKeToanModel = async (sequelize) => {
             kmns: {
                 type: DataTypes.STRING,
             },
+            kmfGoc: {
+                type: DataTypes.TEXT,
+            },
             kmf: {
+                type: DataTypes.STRING,
+            },
+            projectGoc: {
                 type: DataTypes.STRING,
             },
             project: {
@@ -79,6 +96,9 @@ export const createKTQTSoKeToanModel = async (sequelize) => {
             },
             project2: {
                 type: DataTypes.STRING,
+            },
+            unit_codeGoc: {
+                type: DataTypes.TEXT,
             },
             unit_code: {
                 type: DataTypes.TEXT,
@@ -89,10 +109,16 @@ export const createKTQTSoKeToanModel = async (sequelize) => {
             team_code: {
                 type: DataTypes.STRING,
             },
+            product_goc: {
+                type: DataTypes.TEXT,
+            },
             product: {
                 type: DataTypes.TEXT,
             },
             product2: {
+                type: DataTypes.TEXT,
+            },
+            kenhGoc: {
                 type: DataTypes.TEXT,
             },
             kenh: {

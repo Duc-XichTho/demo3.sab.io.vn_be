@@ -10,6 +10,10 @@ export const createTemplateColumnModel = async (sequelize) => {
         autoIncrement: true,
         primaryKey: true,
       },
+        formulaDate: {
+            type: DataTypes.JSONB,
+            allowNull: true,
+        },
       columnIndex: {
         type: DataTypes.INTEGER,
         allowNull: true,
@@ -58,6 +62,14 @@ export const createTemplateColumnModel = async (sequelize) => {
         type: DataTypes.JSONB,
         allowNull: true,
       },
+        duyetDieuKien: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+      },
+        bieuTuongPhanTram: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+      },
       textColor: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -70,10 +82,26 @@ export const createTemplateColumnModel = async (sequelize) => {
         type: DataTypes.JSONB,
         allowNull: true,
       },
+      setting_date_time_picker: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+      },
+      setting_time_diff: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+      },
+      dateFormat: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+      },
       show: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
       },
+        useDataBar: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
     },
     {
       tableName: "template_column",

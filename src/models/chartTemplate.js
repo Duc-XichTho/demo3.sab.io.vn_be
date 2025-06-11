@@ -10,6 +10,12 @@ export const createChartTemplateModel = async (sequelize) => {
                 autoIncrement: true,
                 primaryKey: true,
             },
+            v6: {
+                type: DataTypes.JSONB,
+            },
+            infoSort: {
+                type: DataTypes.JSONB,
+            },
             isSort: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: false,
@@ -67,6 +73,9 @@ export const createChartTemplateModel = async (sequelize) => {
             },
             user_delete: {
                 type: DataTypes.STRING,
+            },
+            info : {
+                type: DataTypes.JSONB
             },
             show: {
                 type: DataTypes.BOOLEAN,

@@ -5,6 +5,10 @@ import {createRuleSettingModel} from "../models/ruleSetting.js";
 import {createBCanvasDataOriginalModel} from "../models/bCanvasDataOriginal.js";
 import {createBCanvasDataOriginalRowModel} from "../models/bCanvasDataOriginalRow.js";
 import {createBCanvasMappingModel} from "../models/bCanvasMapping.js";
+import {createWebPageModel} from "../models/webPage.js";
+import {createStoryWebPageModel} from "../models/storyWebPage.js";
+import {createKpiKQKDModel} from "../models/kpiKQKD.js";
+import {createDienGiaiModel} from "../models/dienGiai.js";
 
 config();
 
@@ -210,12 +214,28 @@ let RuleSetting;
 let BCanvasMapping;
 let BCanvasDataOriginalRow;
 let BCanvasDataOriginal;
-
+let WebPage;
+let StoryWebPage;
+let KHKD;
+let KHKDElement;
+let KHKDTongHop;
+let KpiKQKD;
+let DienGiai;
+let OnboardingGuide;
+let KtqtMapping;
+let KtqtImport;
+let KtqtImportHistory;
+let AiChatHistory;
 const connection = async () => {
     try {
         await sequelize.authenticate();
         console.log("Connection DB successfully");
 
+        DienGiai = await modelImports.createDienGiaiModel(sequelize);
+        WebPage = await modelImports.createWebPageModel(sequelize);
+        WebPage = await modelImports.createWebPageModel(sequelize);
+        KpiKQKD = await modelImports.createKpiKQKDModel(sequelize);
+        StoryWebPage = await modelImports.createStoryWebPageModel(sequelize);
         RuleSetting = await modelImports.createRuleSettingModel(sequelize);
         User = await modelImports.createUserModel(sequelize);
         KTQTReportManagement = await modelImports.createKTQTReportManagementModel(sequelize);
@@ -389,6 +409,15 @@ const connection = async () => {
         BCanvasDataOriginalRow = await modelImports.createBCanvasDataOriginalRowModel(sequelize);
         BCanvasDataOriginal = await modelImports.createBCanvasDataOriginalModel(sequelize);
 
+        KHKD = await modelImports.createKHKDModel(sequelize);
+        KHKDElement = await modelImports.createKHKDElementModel(sequelize);
+        KHKDTongHop = await modelImports.createKHKDTongHopModel(sequelize);
+        KtqtMapping = await modelImports.createKtqtMappingModel(sequelize);
+        KtqtImport = await modelImports.createKtqtImportModel(sequelize);
+        KtqtImportHistory = await modelImports.createKtqtImportHistoryModel(sequelize);
+
+        OnboardingGuide = await modelImports.createOnboardingGuideModel(sequelize);
+        AiChatHistory = await modelImports.createAiChatHistoryModel(sequelize);
         const modelsToAudit = [
             {
                 model: User,
@@ -838,6 +867,10 @@ const connection = async () => {
                 model: ChartTemplate,
                 name: "ChartTemplate",
             },
+            {
+                model: AiChatHistory,
+                name: "AiChatHistory",
+            },
         ];
 
         modelsToAudit.forEach(({model, name}) => {
@@ -1107,4 +1140,16 @@ export {
     BCanvasMapping,
     BCanvasDataOriginalRow,
     BCanvasDataOriginal,
+    WebPage,
+    StoryWebPage,
+    KHKD,
+    KHKDElement,
+    KHKDTongHop,
+    KpiKQKD,
+    DienGiai,
+    OnboardingGuide,
+    KtqtMapping,
+    KtqtImport,
+    KtqtImportHistory,
+    AiChatHistory
 };

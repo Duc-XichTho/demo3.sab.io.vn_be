@@ -20,6 +20,7 @@ import {
   updateTemplateTable
 } from "../services/templateSettingService.js";
 import * as TemplateDataService from '../services/TemplateData.service.js';
+import {deleteTemplateDataByIdsService} from "../services/TemplateData.service.js";
 
 // GET
 export const getAllTemplateTablesController = async (req, res) => {
@@ -177,8 +178,8 @@ export const createTemplateColumnController = async (req, res) => {
 
 export const createTemplateRowController = async (req, res) => {
   try {
-    let { tableId, data } = req.body;
-    const result = await TemplateDataService.createTemplateDataService(tableId, data);
+    let { tableId, data , id_DataOriginal } = req.body;
+    const result = await TemplateDataService.createTemplateDataService(tableId, data , id_DataOriginal);
     res.status(200).json(result);
   } catch (e) {
     res.status(404).json({
@@ -191,8 +192,8 @@ export const createTemplateRowController = async (req, res) => {
 
 export const createBatchTemplateDataController = async (req, res) => {
   try {
-    let { tableId, data } = req.body;
-    const result = await TemplateDataService.createBatchTemplateDataService(tableId, data);
+    let { tableId, data, id_DataOriginal } = req.body;
+    const result = await TemplateDataService.createBatchTemplateDataService(tableId, data, id_DataOriginal);
     res.status(200).json(result);
   } catch (e) {
     res.status(404).json({ message: "Lỗi createBacthTemplateDataController" + e.message, });
@@ -329,6 +330,20 @@ export const deleteTemplateRowController = async (req, res) => {
     });
   }
 };
+
+export const deleteTemplateRowsController = async (req, res) => {
+  try {
+    const ids = req.body.ids;
+    const result = await TemplateDataService.deleteTemplateDataByIdsService(ids);
+    res.status(200).json(result);
+  } catch (e) {
+    res.status(404).json({
+      message:
+        "Lỗi khi tạo dòng cho bản ghi sheet rows không tồn tại: " + e.message,
+    });
+  }
+};
+
 export const deleteTemplateRowByTableIdController = async (req, res) => {
   try {
     let tableId = req.params.tableId;

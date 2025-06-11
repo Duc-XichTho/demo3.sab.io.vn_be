@@ -10,6 +10,9 @@ export const createFileNotePadModel = async (sequelize) => {
                 primaryKey: true,
                 autoIncrement: true,
             },
+            desc: {
+                type: DataTypes.TEXT,
+            },
             tag_id: {
                 type: DataTypes.STRING,
             },
@@ -78,6 +81,16 @@ export const createFileNotePadModel = async (sequelize) => {
             timestamps: false,
         }
     );
+
+    FileNotePad.addHook("beforeCreate", async (fileNote, options) => {
+        const maxPosition = await FileNotePad.max("position", {
+            where: {
+                tab: fileNote.tab,
+            },
+        });
+
+        fileNote.position = maxPosition ? maxPosition + 1 : 1;
+    });
 
     return FileNotePad;
 };

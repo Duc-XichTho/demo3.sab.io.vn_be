@@ -193,7 +193,7 @@ import pmvPlanDetailRouter from "./src/routes/pmvPlanDetailRouter.js";
 import pmvDeploymentRouter from "./src/routes/pmvDeploymentRouter.js";
 import pmvDeploymentDetailRouter from "./src/routes/pmvDeploymentDetailRouter.js";
 import pmvSkuAllocationRouter from "./src/routes/pmvSkuAllocationRouter.js";
-
+import n8nProxyRouter from './src/routes/n8nProxyRouter.js';
 // Gateway
 import GW_CompanyRouter from "./src/routes/gateway/companyRoute.js"
 import GW_MessageRouter from "./src/routes/gateway/messageRoute.js"
@@ -210,7 +210,21 @@ import fileNotePadRouterPublic from "./src/routes/public/fileNotePadRouterPublic
 import bCanvasDataOriginalRouter from "./src/routes/bCanvasDataOriginalRouter.js";
 import bCanvasDataOriginalRowRouter from "./src/routes/bCanvasDataOriginalRowRouter.js";
 import bCanvasMappingRouter from "./src/routes/bCanvasMappingRouter.js";
+import webPageRouter from "./src/routes/webPageRouter.js";
+import storyWebPageRouter from "./src/routes/storyWebPageRouter.js";
 
+import khkdRoutes from "./src/routes/khkdRoutes.js";
+import khkdElementRoutes from "./src/routes/khkdElementRoutes.js";
+import khkdTongHopRoutes from "./src/routes/khkdTongHopRoutes.js";
+import kpiKQKDRouter from "./src/routes/kpiKQKDRouter.js";
+import dienGiaiRouter from "./src/routes/dienGiaiRouter.js";
+import onboardingGuideRoutes from "./src/routes/onboardingGuideRoutes.js";
+import ktqtMappingRoutes from "./src/routes/ktqtMappingRoutes.js";
+import ktqtImportRoutes from "./src/routes/ktqtImportRoutes.js";
+import ktqtImportHistoryRoutes from "./src/routes/ktqtImportHistoryRoutes.js";
+import fileTabPublicRouter from "./src/routes/public/fileTabPublicRouter.js";
+import n8nWebhookSender from "./src/routes/public/n8nWebhookSender.js";
+import aiChatHistoryRoutes from "./src/routes/aiChatHistoryRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -219,7 +233,7 @@ schedule();
 
 const apiRateLimiter = rateLimit({
   windowMs: 5 * 60 * 1000,
-  max: 5000,
+  max: 10000,
   message: 'Quá nhiều yêu cầu, hãy thử lại sau!',
   standardHeaders: true,
   legacyHeaders: false,
@@ -246,8 +260,14 @@ app.post("/git/update", githubWebhook, (req, res) => {
   return res.status(200).send("Webhook received");
 });
 
-app.use("/api/template-setting", apiRateLimiter, templateSettingRouter);
-// app.use("/api/template-setting", templateSettingRouter);
+app.use("/api/file-tab-public", fileTabPublicRouter);
+app.use("/api/n8n-webhook", n8nWebhookSender);
+
+app.use("/api/template-setting/create", apiRateLimiter, templateSettingRouter);
+app.use("/api/template-setting/update", apiRateLimiter, templateSettingRouter);
+app.use("/api/template-setting/delete", apiRateLimiter, templateSettingRouter);
+// Routes that don't need rate limiting
+app.use("/api/template-setting", templateSettingRouter);
 app.use("/api/file-note-pad", fileNotePadRouter);
 
 app.use(authRoutes);
@@ -257,6 +277,11 @@ app.use("/tai-khoan", taiKhoanPublicRouter);
 app.use("/file-note-pad", fileNotePadRouterPublic);
 
 app.use(authenticateToken);
+
+app.use('/api/web-page', webPageRouter);
+app.use('/api/dien-giai', dienGiaiRouter);
+app.use('/api/kpi-kqkd', kpiKQKDRouter);
+app.use('/api/story-web-page', storyWebPageRouter);
 app.use('/api/tts', audioPlayRouter);
 app.use('/api/rule-setting', RuleSettingRouter);
 app.use("/api/tag", tagRouter);
@@ -437,6 +462,15 @@ app.use("/api/b-canvas-data-original", bCanvasDataOriginalRouter);
 app.use("/api/b-canvas-data-original-row", bCanvasDataOriginalRowRouter);
 app.use("/api/b-canvas-mapping", bCanvasMappingRouter);
 
+app.use("/api/khkd", khkdRoutes);
+app.use("/api/khkd-element", khkdElementRoutes);
+app.use("/api/khkd-tong-hop", khkdTongHopRoutes);
+
+app.use("/api/onboarding-guide", onboardingGuideRoutes);
+app.use("/api/ktqt-mapping", ktqtMappingRoutes);
+app.use("/api/ktqt-import", ktqtImportRoutes);
+app.use("/api/ktqt-import-history", ktqtImportHistoryRoutes);
+app.use("/api/ai-chat-history", aiChatHistoryRoutes);
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {

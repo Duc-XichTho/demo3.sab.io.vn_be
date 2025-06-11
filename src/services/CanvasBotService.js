@@ -18,6 +18,38 @@ export const getAllCanvasBot = async () => {
         throw new Error('Lỗi khi lấy danh sách bản ghi Canvas Bot: ' + error.message);
     }
 }
+export const getCanvasBotByIdCanvasContainer = async (id) => {
+    try {
+        const dataList = await CanvasBot.findAll({
+            where: {
+                idCanvasContainer:id,
+                show: true
+            },
+            order: [
+                ["id", "ASC"]
+            ],
+        });
+        return dataList;
+    } catch (error) {
+        throw new Error('Lỗi khi lấy danh sách bản ghi Canvas Bot: ' + error.message);
+    }
+}
+export const getCanvasBotByIdKHKD = async (id) => {
+    try {
+        const dataList = await CanvasBot.findAll({
+            where: {
+                idKHKD:id,
+                show: true
+            },
+            order: [
+                ["id", "ASC"]
+            ],
+        });
+        return dataList;
+    } catch (error) {
+        throw new Error('Lỗi khi lấy danh sách bản ghi Canvas Bot: ' + error.message);
+    }
+}
 
 // CREATE
 export const createCanvasBot = async (newData) => {

@@ -1,4 +1,4 @@
-import {TemplateColumn, TemplateData} from "../postgres/postgres.js";
+import {TemplateColumn, TemplateData, TemplateTable} from "../postgres/postgres.js";
 import { cacheQueue } from "./redis/cacheQueue.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -18,7 +18,7 @@ export const getTemplateDataByTableIdService = async (tableId) => {
         tableId,
         show: true,
       },
-      order: [["id", "ASC"]],
+      order: [["id", "DESC"]],
     });
 
     cacheQueue.set(cacheKey(tableId), data);
@@ -44,31 +44,33 @@ export const getTemplateDataByIdService = async (id) => {
   }
 };
 
-export const createTemplateDataService = async (tableId, newData) => {
+export const createTemplateDataService = async (tableId, data , id_DataOriginal) => {
   try {
-    const data = await TemplateData.create({
+    const newData = await TemplateData.create({
       tableId,
-      newData,
+      data,
+      id_DataOriginal,
       show: true,
     });
 
-    const cacheKeyById = `${process.env.FOLDER_NAME_BUCKET_BITFLY}_template_data:id:${data.id}`;
+    const cacheKeyById = `${process.env.FOLDER_NAME_BUCKET_BITFLY}_template_data:id:${newData.id}`;
 
-    cacheQueue.set(cacheKeyById, data);
+    cacheQueue.set(cacheKeyById, newData);
     cacheQueue.delete(cacheKey(tableId));
 
-    return data;
+    return newData
   } catch (error) {
     console.log('Error createTemplateDataService', error.message);
   }
 };
 
-export const createBatchTemplateDataService = async (tableId, newData) => {
+export const createBatchTemplateDataService = async (tableId, newData, id_DataOriginal) => {
 
   try {
     const data = await TemplateData.bulkCreate(newData.map((item) => ({
       tableId,
       data: item,
+      id_DataOriginal
     })));
 
 
@@ -98,37 +100,44 @@ export const updateTemplateDataService = async (id, dataUpdate) => {
 };
 
 export const updateBatchTemplateDataService = async (tableId, dataUpdate) => {
+  const t = await TemplateData.sequelize.transaction(); // bắt đầu transaction
+
   try {
     if (!Array.isArray(dataUpdate)) {
       throw new Error('dataUpdate must be an array');
     }
 
-    const updates = await Promise.all(
-      dataUpdate.map(async ({ id, data }) => {
-        const row = await TemplateData.findOne({
-          where: {
-            id,
-            tableId,
-            show: true
-          }
-        });
+    const updates = [];
 
-        if (!row) {
-          throw new Error(`Bản ghi template_data với id ${id} không tồn tại`);
-        }
+    for (const { id, data } of dataUpdate) {
+      const row = await TemplateData.findOne({
+        where: { id, tableId, show: true },
+        transaction: t
+      });
 
-        return row.update({ data });
-      })
-    );
+      if (!row) {
+        throw new Error(`Bản ghi template_data với id ${id} không tồn tại`);
+      }
 
+      const updated = await row.update({ data }, { transaction: t });
+      updates.push(updated);
+    }
+
+    await TemplateTable.update({ isNeedUpdatePivot: true}, {
+      where: {
+        id: tableId,
+      },
+    })
+    await t.commit(); // commit transaction
     cacheQueue.delete(cacheKey(tableId));
-
     return updates.map(row => row.dataValues);
   } catch (error) {
+    await t.rollback(); // rollback nếu lỗi
     console.log('Error updateBatchTemplateDataService', error.message);
     throw error;
   }
 };
+
 
 export const deleteTemplateDataByIdService = async (id) => {
   const cacheKeyById = `${process.env.FOLDER_NAME_BUCKET_BITFLY}_template_data:id:${id}`;
@@ -148,6 +157,41 @@ export const deleteTemplateDataByIdService = async (id) => {
   } catch (error) {
     console.log('Error deleteTemplateDataByIdService', error.message);
   }
+};
+
+const chunkArray = (array, size) => {
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    result.push(array.slice(i, i + size));
+  }
+  return result;
+};
+
+export const deleteTemplateDataByIdsService = async (ids = []) => {
+  const chunks = chunkArray(ids, 100); // chia thành các nhóm 100 ID
+  const allResults = [];
+
+  for (const chunk of chunks) {
+    const results = await Promise.all(
+        chunk.map(async (id) => {
+          try {
+            const cacheKeyById = `${process.env.FOLDER_NAME_BUCKET_BITFLY}_template_data:id:${id}`;
+            const row = await TemplateData.findByPk(id);
+            if (!row) return null;
+            const updatedRow = await row.update({ show: false });
+            cacheQueue.delete(cacheKeyById);
+            cacheQueue.delete(cacheKey(row.tableId));
+            return updatedRow.dataValues;
+          } catch (err) {
+            console.error(`Lỗi với ID ${id}:`, err.message);
+            return null;
+          }
+        })
+    );
+    allResults.push(...results.filter(Boolean));
+  }
+
+  return allResults;
 };
 export const deleteTemplateRowByTableIdService = async (tableId) => {
   try {

@@ -10,6 +10,10 @@ export const createTemplateTableModel = async (sequelize) => {
                 autoIncrement: true,
                 primaryKey: true,
             },
+            isNeedUpdatePivot: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+            },
             setting: {
                 type: DataTypes.JSONB,
                 allowNull: true,
@@ -27,8 +31,23 @@ export const createTemplateTableModel = async (sequelize) => {
             deployment_id: {
                 type: DataTypes.INTEGER,
             },
+            data_original_id: {
+                type: DataTypes.INTEGER,
+            },
             viewer: {
                 type: DataTypes.JSONB,
+                allowNull: true,
+            },
+            mother_table_id: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
+            mother_rotate_columns: {
+                type: DataTypes.JSONB,
+                allowNull: true,
+            },
+            table_type:{
+                type: DataTypes.STRING,
                 allowNull: true,
             },
             show: {
