@@ -31,6 +31,14 @@ const sequelize = new Sequelize(
         dialectOptions: {
             // Thời gian tối đa (tính bằng ms) để kết nối cơ sở dữ liệu trước khi timeout (ở đây là 60000 ms = 60 giây).
             connectTimeout: 60000,
+            // Thêm cấu hình SSL
+            ssl: {
+                require: false,
+                rejectUnauthorized: false
+            },
+            // Thêm các tùy chọn bảo mật
+            keepAlive: true,
+            keepAliveInitialDelayMillis: 0
         },
     }
 );
@@ -222,6 +230,7 @@ let AiChatHistory;
 let ExternalChatHistory;
 let AiFreeChatHistory;
 let ChatHistoryFile;
+let TemplateSettingAIReportBuilder;
 const connection = async () => {
     try {
         await sequelize.authenticate();
@@ -417,7 +426,8 @@ const connection = async () => {
         OnboardingGuide = await modelImports.createOnboardingGuideModel(sequelize);
         AiChatHistory = await modelImports.createAiChatHistoryModel(sequelize);
         AiFreeChatHistory = await modelImports.createAiFreeChatHistoryModel(sequelize);
-        const modelsToAudit = [
+        TemplateSettingAIReportBuilder = await modelImports.createTemplateSettingAIReportBuilderModel(sequelize);
+            const modelsToAudit = [
             {
                 model: User,
                 name: "User",
@@ -956,8 +966,8 @@ const connection = async () => {
             },
         ];
 
-        // await sequelize.sync({ alter: true });
-        await sequelize.sync();
+        await sequelize.sync({ alter: true });
+        // await sequelize.sync();
         console.log("Database Synced");
     } catch (error) {
         console.error("Unable to connect to the database", error);
@@ -1154,4 +1164,5 @@ export {
     ExternalChatHistory,
     AiFreeChatHistory,
     ChatHistoryFile,
+    TemplateSettingAIReportBuilder,
 };
